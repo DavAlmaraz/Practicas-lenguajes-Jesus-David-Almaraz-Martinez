@@ -1,2 +1,2 @@
 # Ejercicios-Pascal
-Ejercicios del lenguaje Pascal, Jonathan Peña Ambrosio 302
+Ejercicios del lenguaje de programacion Pascal, Jesus David Almaraz Martinez 302
