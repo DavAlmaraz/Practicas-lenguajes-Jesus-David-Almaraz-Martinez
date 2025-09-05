@@ -1,0 +1,138 @@
+      PROGRAM ARBOLBINARIO
+      IMPLICIT NONE
+
+      TYPE NODO
+          INTEGER :: DATO
+          TYPE(NODO), POINTER :: IZQUIERDO
+          TYPE(NODO), POINTER :: DERECHO
+      END TYPE NODO
+
+      TYPE ARBOLBINARIO
+          TYPE(NODO), POINTER :: RAIZ
+      END TYPE ARBOLBINARIO
+
+      TYPE(ARBOLBINARIO) :: ARBOL
+      INTEGER :: OPCION, DATO
+
+      ARBOL%RAIZ => NULL()
+
+      DO
+          PRINT *, '=== MENU ARBOL BINARIO ==='
+          PRINT *, '1. Insertar nodo'
+          PRINT *, '2. Recorrido Preorden'
+          PRINT *, '3. Recorrido Inorden'
+          PRINT *, '4. Recorrido Postorden'
+          PRINT *, '5. Mostrar todos'
+          PRINT *, '6. Salir'
+          PRINT *, 'Opcion: '
+          READ *, OPCION
+
+          SELECT CASE (OPCION)
+          CASE (1)
+              PRINT *, 'Valor: '
+              READ *, DATO
+              CALL INSERTAR(ARBOL, DATO)
+              PRINT *, 'Insertado.'
+          CASE (2)
+              IF (.NOT. ASSOCIATED(ARBOL%RAIZ)) THEN
+                  PRINT *, 'Arbol vacio.'
+              ELSE
+                  PRINT *, 'Preorden: '
+                  CALL PREORDEN(ARBOL%RAIZ)
+                  PRINT *, ''
+              END IF
+          CASE (3)
+              IF (.NOT. ASSOCIATED(ARBOL%RAIZ)) THEN
+                  PRINT *, 'Arbol vacio.'
+              ELSE
+                  PRINT *, 'Inorden: '
+                  CALL INORDEN(ARBOL%RAIZ)
+                  PRINT *, ''
+              END IF
+          CASE (4)
+              IF (.NOT. ASSOCIATED(ARBOL%RAIZ)) THEN
+                  PRINT *, 'Arbol vacio.'
+              ELSE
+                  PRINT *, 'Postorden: '
+                  CALL POSTORDEN(ARBOL%RAIZ)
+                  PRINT *, ''
+              END IF
+          CASE (5)
+              IF (.NOT. ASSOCIATED(ARBOL%RAIZ)) THEN
+                  PRINT *, 'Arbol vacio.'
+              ELSE
+                  PRINT *, 'Preorden: '
+                  CALL PREORDEN(ARBOL%RAIZ)
+                  PRINT *, 'Inorden: '
+                  CALL INORDEN(ARBOL%RAIZ)
+                  PRINT *, 'Postorden: '
+                  CALL POSTORDEN(ARBOL%RAIZ)
+                  PRINT *, ''
+              END IF
+          CASE (6)
+              PRINT *, 'Adios!'
+              EXIT
+          CASE DEFAULT
+              PRINT *, 'Opcion invalida.'
+          END SELECT
+      END DO
+
+      CONTAINS
+
+      RECURSIVE SUBROUTINE INSERTARRECURSIVO(ACTUAL, DATO)
+      TYPE(NODO), POINTER, INTENT(INOUT) :: ACTUAL
+      INTEGER, INTENT(IN) :: DATO
+      TYPE(NODO), POINTER :: NUEVO
+
+      IF (.NOT. ASSOCIATED(ACTUAL)) THEN
+          ALLOCATE(NUEVO)
+          NUEVO%DATO = DATO
+          NUEVO%IZQUIERDO => NULL()
+          NUEVO%DERECHO => NULL()
+          ACTUAL => NUEVO
+      ELSE
+          IF (DATO .LT. ACTUAL%DATO) THEN
+              CALL INSERTARRECURSIVO(ACTUAL%IZQUIERDO, DATO)
+          ELSE IF (DATO .GT. ACTUAL%DATO) THEN
+              CALL INSERTARRECURSIVO(ACTUAL%DERECHO, DATO)
+          END IF
+      END IF
+      END SUBROUTINE INSERTARRECURSIVO
+
+      SUBROUTINE INSERTAR(ARBOL, DATO)
+      TYPE(ARBOLBINARIO), INTENT(INOUT) :: ARBOL
+      INTEGER, INTENT(IN) :: DATO
+      CALL INSERTARRECURSIVO(ARBOL%RAIZ, DATO)
+      END SUBROUTINE INSERTAR
+
+      RECURSIVE SUBROUTINE PREORDEN(NODO)
+      TYPE(NODO), POINTER, INTENT(IN) :: NODO
+
+      IF (ASSOCIATED(NODO)) THEN
+          WRITE(*, '(I0, " ")', ADVANCE='NO') NODO%DATO
+          CALL PREORDEN(NODO%IZQUIERDO)
+          CALL PREORDEN(NODO%DERECHO)
+      END IF
+      END SUBROUTINE PREORDEN
+
+      RECURSIVE SUBROUTINE INORDEN(NODO)
+      TYPE(NODO), POINTER, INTENT(IN) :: NODO
+
+      IF (ASSOCIATED(NODO)) THEN
+          CALL INORDEN(NODO%IZQUIERDO)
+          WRITE(*, '(I0, " ")', ADVANCE='NO') NODO%DATO
+          CALL INORDEN(NODO%DERECHO)
+      END IF
+      END SUBROUTINE INORDEN
+
+      RECURSIVE SUBROUTINE POSTORDEN(NODO)
+      TYPE(NODO), POINTER, INTENT(IN) :: NODO
+
+      IF (ASSOCIATED(NODO)) THEN
+          CALL POSTORDEN(NODO%IZQUIERDO)
+          CALL POSTORDEN(NODO%DERECHO)
+          WRITE(*, '(I0, " ")', ADVANCE='NO') NODO%DATO
+      END IF
+      END SUBROUTINE POSTORDEN
+
+      END PROGRAM ARBOLBINARIO
